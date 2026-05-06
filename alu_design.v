@@ -17,7 +17,7 @@ reg [2*n:0]  r_res;
 reg  r_cout, r_err, r_oflow, r_g, r_l, r_e;
 always @(posedge clk or posedge rst) begin
     if (rst) begin
-        r_res   <= {(2*n+1){1'b0}};
+        r_res   <= {(2*n){1'b0}};
         r_err   <= 1'b0;
         r_oflow <= 1'b0;
         r_cout  <= 1'b0;
@@ -26,12 +26,12 @@ always @(posedge clk or posedge rst) begin
         r_e     <= 1'b0;
         count_1 <= 2'd0; count_2 <= 2'd0;
         count_3 <= 2'd0; count_4 <= 2'd0;
-        temp_res1 <= {(2*n+1){1'b0}};
-        temp_res2 <= {(2*n+1){1'b0}};
+        temp_res1 <= {(2*n){1'b0}};
+        temp_res2 <= {(2*n){1'b0}};
         res<=0;
     end
     else if (ce) begin
-     r_res   <= {(2*n+1){1'b0}};
+     r_res   <= {(2*n){1'b0}};
             r_err   <= 1'b0;
             r_oflow <= 1'b0;
             r_cout  <= 1'b0;
@@ -40,7 +40,7 @@ always @(posedge clk or posedge rst) begin
             r_e     <= 1'b0;
               res<=0;
         if (mode) begin
-            r_res   <= {(2*n+1){1'b0}};
+            r_res   <= {(2*n){1'b0}};
             r_err   <= 1'b0;
             r_oflow <= 1'b0;
             r_cout  <= 1'b0;
@@ -56,7 +56,7 @@ always @(posedge clk or posedge rst) begin
                         r_res  <= opa + opb;
                         r_cout <= ({1'b0,opa} + {1'b0,opb}) > {n{1'b1}};
                     end else begin
-                        r_res <= {(2*n+1){1'b0}};
+                        r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
@@ -65,7 +65,7 @@ always @(posedge clk or posedge rst) begin
                         r_res   <= opa - opb;
                         r_oflow <= (opb > opa);
                     end else begin
-                        r_res <= {(2*n+1){1'b0}};
+                        r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
@@ -74,7 +74,7 @@ always @(posedge clk or posedge rst) begin
                         r_res  <= opa + opb;
                         r_cout <= ({1'b0,opa} + {1'b0,opb}) > {n{1'b1}};
                     end else begin
-                        r_res <= {(2*n+1){1'b0}};
+                        r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
@@ -83,7 +83,7 @@ always @(posedge clk or posedge rst) begin
                         r_res   <= opa - opb - cin;
                         r_oflow <= ({1'b0,opb} + cin) > opa;
                     end else begin
-                        r_res <= {(2*n+1){1'b0}};
+                        r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
@@ -91,7 +91,7 @@ always @(posedge clk or posedge rst) begin
                     if (inp_valid == 2'b01)
                         r_res <= opa + 1;
                     else begin
-                        r_res <= {(2*n+1){1'b0}};
+                        r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
@@ -99,7 +99,7 @@ always @(posedge clk or posedge rst) begin
                     if (inp_valid == 2'b01)
                         r_res <= opa - 1;
                     else begin
-                        r_res <= {(2*n+1){1'b0}};
+                        r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
@@ -107,7 +107,7 @@ always @(posedge clk or posedge rst) begin
                     if (inp_valid == 2'b10)
                         r_res <= opb + 1;
                     else begin
-                        r_res <= {(2*n+1){1'b0}};
+                        r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
@@ -115,7 +115,7 @@ always @(posedge clk or posedge rst) begin
                     if (inp_valid == 2'b10)
                         r_res <= opb - 1;
                     else begin
-                        r_res <= {(2*n+1){1'b0}};
+                        r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
@@ -183,7 +183,7 @@ always @(posedge clk or posedge rst) begin
                         r_l     <= ($signed(opa) < $signed(opb));
                         r_e     <= ($signed(opa) == $signed(opb));
                     end else begin
-                        r_res <= {(2*n+1){1'b0}};
+                        r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
@@ -196,7 +196,7 @@ always @(posedge clk or posedge rst) begin
                         r_l     <= ($signed(opa) < $signed(opb));
                         r_e     <= ($signed(opa) == $signed(opb));
                     end else begin
-                        r_res <= {(2*n+1){1'b0}};
+                        r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
@@ -215,58 +215,58 @@ always @(posedge clk or posedge rst) begin
             case (cmd)
                 0: begin
                     if (inp_valid == 2'b11) r_res <= opa & opb;
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 1: begin
                     if (inp_valid == 2'b11) r_res <= ~(opa & opb);
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 2: begin
                     if (inp_valid == 2'b11) r_res <= opa | opb;
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 3: begin
                     if (inp_valid == 2'b11) r_res <= ~(opa | opb);
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 4: begin
                     if (inp_valid == 2'b11) r_res <= opa ^ opb;
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 5: begin
                     if (inp_valid == 2'b11) r_res <= ~(opa ^ opb);
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 6: begin
                     if (inp_valid == 2'b11) r_res <= ~opa;
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 7: begin
                     if (inp_valid == 2'b11) r_res <= ~opb;
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 8: begin
                     if (inp_valid == 2'b01) r_res <= opa >> 1;
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 9: begin
                     if (inp_valid == 2'b01) r_res <= opa << 1;
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 10: begin
                     if (inp_valid == 2'b10) r_res <= opb >> 1;
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 11: begin
                     if (inp_valid == 2'b10) r_res <= opb << 1;
-                    else begin r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1; end
+                    else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 12: begin
                     if (inp_valid == 2'b11) begin
                         if (opb > 4'b1111) r_err <= 1'b1;
                         else r_res <= (opa << opb[2:0]) | (opa >> (n - opb[2:0]));
                     end else begin
-                        r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1;
+                        r_res <= {(2*n){1'b0}}; r_err <= 1'b1;
                     end
                 end
                 13: begin
@@ -274,7 +274,7 @@ always @(posedge clk or posedge rst) begin
                         if (opb > 4'b1111) r_err <= 1'b1;
                         else r_res <= (opa >> opb[2:0]) | (opa << (n - opb[2:0]));
                     end else begin
-                        r_res <= {(2*n+1){1'b0}}; r_err <= 1'b1;
+                        r_res <= {(2*n){1'b0}}; r_err <= 1'b1;
                     end
                 end
                 default: r_err <= 1'b1;
@@ -284,7 +284,7 @@ always @(posedge clk or posedge rst) begin
 end
 always @(posedge clk or posedge rst) begin
     if (rst) begin
-        res   <= {(2*n+1){1'b0}};
+        res   <= {(2*n){1'b0}};
         err   <= 1'b0;
         oflow <= 1'b0;
         cout  <= 1'b0;
