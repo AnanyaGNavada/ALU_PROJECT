@@ -41,8 +41,8 @@ else if(ce) begin
             0: begin
                 if(inp_valid==2'b11)
                 begin
-                    res<=opa+opb;
-                    cout<=res[n];
+                    res  <= opa + opb;
+                    cout <= ({1'b0, opa} + {1'b0, opb})>{n{1'b1}}  ;
                 end
             else begin
                 res <= {2*n{1'b0}};
@@ -67,8 +67,9 @@ end
 end
 2:begin
     if(inp_valid==2'b11)begin
-        res<=opa+opb+cin;
-        cout<=res[n];
+        res  <= opa + opb;
+        cout <= ({1'b0, opa} + {1'b0, opb})> {n{1'b1}};
+ 
     end
 else
 begin
@@ -78,19 +79,14 @@ end
 end
 3:begin
     if(inp_valid==2'b11)begin
-        if(opb>opa) begin
-            res<=opa-opb-cin;
-            oflow <= 1;
-        end
-    else begin
         res<=opa-opb-cin;
+        oflow<=({1'b0,opb}+cin)>opa;
+        end
+    else
+    begin
+        res <= {2*n{1'b0}};
+        err<=1'b1;
     end
-end
-else
-begin
-    res <= {2*n{1'b0}};
-    err<=1'b1;
-end
 end
 4:begin
     if(inp_valid==2'b01)
@@ -145,14 +141,17 @@ end
         end
     else if(count_1 ==2'd2) begin
         res<=temp_res1;
-        count_1<=0;
+        temp_res1<=((opa+1)*(opb+1));
+        count_1<=1;
     end
-else
-count_1<=count_1+1;
-end
+    else
+        count_1<=count_1+1;
+    end
 else begin
-    if(count_2==2'd1)
-    err<=1'b1;
+    if(count_2==2'd2) begin
+        err<=1'b1;
+        count_2<=1;
+    end
     else
     count_2<=count_2+1;
 end
@@ -166,14 +165,17 @@ end
         end
     else if(count_3 ==2'd2)begin
         res<=temp_res2;
-        count_3<=0;
+        count_3<=1;
+        temp_res2<=(opa<<1)*opb;
     end
 else
 count_3<=count_3+1;
 end
 else begin
-    if(count_4==2'd1)
-    err<=1'b1;
+    if(count_4==2'd2) begin
+        err<=1'b1;
+        count_4<=1;
+    end
     else
     count_4<=count_4+1;
 end
