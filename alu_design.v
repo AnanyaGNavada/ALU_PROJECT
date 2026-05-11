@@ -71,7 +71,7 @@ always @(posedge clk or posedge rst) begin
                 end
                 2: begin
                     if (inp_valid == 2'b11) begin
-                        r_res  <= opa + opb;
+                        r_res  <= opa + opb +cin;
                         r_cout <= ({1'b0,opa} + {1'b0,opb}) > {n{1'b1}};
                     end else begin
                         r_res <= {(2*n){1'b0}};
@@ -88,32 +88,32 @@ always @(posedge clk or posedge rst) begin
                     end
                 end
                 4: begin
-                    if (inp_valid == 2'b01)
-                        r_res <= opa + 1;
+                    if (inp_valid == 2'b01 || inp_valid==2'b11)
+                        r_res <= (opa + 1) &{n{1'b1}};
                     else begin
                         r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
                 5: begin
-                    if (inp_valid == 2'b01)
-                        r_res <= opa - 1;
+                    if (inp_valid == 2'b01 || inp_valid==2'b11)
+                         r_res <= (opa - 1) & {n{1'b1}};
                     else begin
                         r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
                 6: begin
-                    if (inp_valid == 2'b10)
-                        r_res <= opb + 1;
+                    if (inp_valid == 2'b10 || inp_valid==2'b11)
+                        r_res <= (opb + 1) & {n{1'b1}};
                     else begin
                         r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
                     end
                 end
                 7: begin
-                    if (inp_valid == 2'b10)
-                        r_res <= opb - 1;
+                    if (inp_valid == 2'b10 || inp_valid==2'b11)
+                        r_res <= opb - 1 & {n{1'b1}};
                     else begin
                         r_res <= {(2*n){1'b0}};
                         r_err <= 1'b1;
@@ -176,8 +176,8 @@ always @(posedge clk or posedge rst) begin
                 end
                 11: begin
                     if (inp_valid == 2'b11) begin
-                        r_res   <= $signed(opa) + $signed(opb);
-                        r_oflow <= (opa[n-1] == opb[n-1]) &&
+                        r_res   <= $signed({opa[n-1], opa}) + $signed({opb[n-1], opb});
+                        r_oflow <= ($signed(opa[n-1]) == $signed(opb[n-1])) &&
                                    (($signed(opa) + $signed(opb)) >> (n-1) != opa[n-1]);
                         r_g     <= ($signed(opa) > $signed(opb));
                         r_l     <= ($signed(opa) < $signed(opb));
@@ -190,8 +190,8 @@ always @(posedge clk or posedge rst) begin
                 12: begin
                     if (inp_valid == 2'b11) begin
                         r_res   <= $signed(opa) - $signed(opb);
-                        r_oflow <= (opa[n-1] != opb[n-1]) &&
-                                   (($signed(opa) - $signed(opb)) >> (n-1) != opa[n-1]);
+                        r_oflow <= ($signed(opa[n-1]) != $signed(opb[n-1])) &&
+                                   ((($signed(opa) - $signed(opb)) >> (n-1)) != opa[n-1]);
                         r_g     <= ($signed(opa) > $signed(opb));
                         r_l     <= ($signed(opa) < $signed(opb));
                         r_e     <= ($signed(opa) == $signed(opb));
@@ -218,65 +218,77 @@ always @(posedge clk or posedge rst) begin
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 1: begin
-                    if (inp_valid == 2'b11) r_res <= ~(opa & opb);
+                    if (inp_valid == 2'b11) r_res <= { {n{1'b0}}, ~(opa & opb) };
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 2: begin
-                    if (inp_valid == 2'b11) r_res <= opa | opb;
+                    if (inp_valid == 2'b11) r_res <= { {n{1'b0}}, (opa | opb) };
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 3: begin
-                    if (inp_valid == 2'b11) r_res <= ~(opa | opb);
+                    if (inp_valid == 2'b11) r_res <= { {n{1'b0}}, ~(opa | opb) };
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 4: begin
-                    if (inp_valid == 2'b11) r_res <= opa ^ opb;
+                    if (inp_valid == 2'b11) r_res <= { {n{1'b0}}, (opa ^ opb) };
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 5: begin
-                    if (inp_valid == 2'b11) r_res <= ~(opa ^ opb);
+                    if (inp_valid == 2'b11) r_res <= { {n{1'b0}}, ~(opa ^ opb) };
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 6: begin
-                    if (inp_valid == 2'b11) r_res <= ~opa;
+                    if (inp_valid == 2'b11 || inp_valid==2'b01)  r_res <= { {n{1'b0}}, ~opa };
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 7: begin
-                    if (inp_valid == 2'b11) r_res <= ~opb;
+                    if (inp_valid == 2'b11 || inp_valid==2'b10) r_res <= { {n{1'b0}}, ~opb };
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 8: begin
-                    if (inp_valid == 2'b01) r_res <= opa >> 1;
+                    if (inp_valid == 2'b01 || inp_valid==2'b11) r_res <= opa >> 1;
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 9: begin
-                    if (inp_valid == 2'b01) r_res <= opa << 1;
+                    if (inp_valid == 2'b01 || inp_valid==2'b11) r_res <= opa << 1;
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 10: begin
-                    if (inp_valid == 2'b10) r_res <= opb >> 1;
+                    if (inp_valid == 2'b10 || inp_valid==2'b11) r_res <= opb >> 1;
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
                 11: begin
-                    if (inp_valid == 2'b10) r_res <= opb << 1;
+                    if (inp_valid == 2'b10 || inp_valid==2'b11) r_res <= opb << 1;
                     else begin r_res <= {(2*n){1'b0}}; r_err <= 1'b1; end
                 end
-                12: begin
-                    if (inp_valid == 2'b11) begin
-                        if (opb > 4'b1111) r_err <= 1'b1;
-                        else r_res <= (opa << opb[2:0]) | (opa >> (n - opb[2:0]));
-                    end else begin
-                        r_res <= {(2*n){1'b0}}; r_err <= 1'b1;
-                    end
-                end
-                13: begin
-                    if (inp_valid == 2'b11) begin
-                        if (opb > 4'b1111) r_err <= 1'b1;
-                        else r_res <= (opa >> opb[2:0]) | (opa << (n - opb[2:0]));
-                    end else begin
-                        r_res <= {(2*n){1'b0}}; r_err <= 1'b1;
-                    end
-                end
+               12: begin
+   			if (inp_valid == 2'b11) begin
+        			if (|opb[n-1:n/2])
+            				r_err <= 1'b1;
+        				if (opb[2:0] == 3'b000)
+            					r_res <= opa;
+        				else
+            					r_res <= { {n{1'b0}},(opa << opb[2:0]) | (opa >> (n - opb[2:0])) };
+    			end else begin
+        			r_res <= {(2*n){1'b0}};
+        			r_err <= 1'b1;
+    			end
+		end
+		13: begin
+		    if (inp_valid == 2'b11) begin
+			if (|opb[n-1:n/2])
+			    r_err <= 1'b1;
+
+			if (opb[2:0] == 3'b000)
+			    r_res <= opa;
+			else
+			    r_res <= { {n{1'b0}},
+				       (opa >> opb[2:0]) | (opa << (n - opb[2:0])) };
+		    end else begin
+			r_res <= {(2*n){1'b0}};
+			r_err <= 1'b1;
+		    end
+		end
                 default: r_err <= 1'b1;
             endcase
         end
